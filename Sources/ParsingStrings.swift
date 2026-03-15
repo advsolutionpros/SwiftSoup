@@ -152,7 +152,7 @@ public struct ParsingStrings: Hashable, Equatable, Sendable {
     }
     
     public init(_ strings: [UnicodeScalar]) {
-        self.init(strings.map { Array($0.utf8) })
+        self.init(strings.map { String($0).utf8Array })
     }
     
     private static func computeHash(
@@ -258,13 +258,8 @@ public struct ParsingStrings: Hashable, Equatable, Sendable {
             return contains(UInt8(scalar.value))
         }
         
-        var buffer = [UInt8](repeating: 0, count: 4)
-        var length = 0
-        for b in scalar.utf8 {
-            buffer[length] = b
-            length &+= 1
-        }
-        let slice = buffer[..<length]
+        let bytes = String(scalar).utf8Array
+        let slice = bytes[...]
         
         // Walk the trie:
         return containsTrie(slice)

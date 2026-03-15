@@ -388,14 +388,8 @@ public final class CharacterReader {
             let byte = UInt8(c.value)
             return consumeToAnyOfOneSlice(byte)
         }
-        var buffer = [UInt8](repeating: 0, count: 4)
-        var length = 0
-        for b in c.utf8 {
-            buffer[length] = b
-            length &+= 1
-        }
-        if length == 0 { return consumeToEndUTF8Slice() }
-        let target = Array(buffer[..<length])
+        let target = String(c).utf8Array
+        if target.isEmpty { return consumeToEndUTF8Slice() }
         guard let targetIx = nextIndexOf(target) else { return consumeToEndUTF8Slice() }
         let consumed = cacheString(pos, targetIx)
         pos = targetIx
@@ -720,7 +714,7 @@ public final class CharacterReader {
     }
     
     public func matchesAny(_ seq: [UnicodeScalar]) -> Bool {
-        return matchesAny(seq.map { Array($0.utf8) })
+        return matchesAny(seq.map { String($0).utf8Array })
     }
     
     public func matchesAny(_ seq: [UInt8]...) -> Bool {
@@ -955,14 +949,8 @@ public final class CharacterReader {
     
     @inline(__always)
     public func nextIndexOf(_ c: UnicodeScalar) -> String.UTF8View.Index? {
-        var buffer = [UInt8](repeating: 0, count: 4)
-        var length = 0
-        for b in c.utf8 {
-            buffer[length] = b
-            length &+= 1
-        }
-        if length == 0 { return nil }
-        let target = Array(buffer[..<length])
+        let target = String(c).utf8Array
+        if target.isEmpty { return nil }
         guard let targetIx = nextIndexOf(target) else { return nil }
         let byteOffset = targetIx
         let utf8View = String(decoding: input, as: UTF8.self).utf8

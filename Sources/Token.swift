@@ -675,7 +675,7 @@ open class Token {
         
         @inline(__always)
         func appendTagName(_ append: UnicodeScalar) {
-            appendTagName(ByteSlice.fromArray(Array(append.utf8)))
+            appendTagName(ByteSlice.fromArray(String(append).utf8Array))
         }
 
         @inline(__always)
@@ -983,7 +983,7 @@ open class Token {
         
         @inline(__always)
         func appendAttributeName(_ append: UnicodeScalar) {
-            appendAttributeName(Array(append.utf8))
+            appendAttributeName(String(append).utf8Array)
         }
 
         @inline(__always)
